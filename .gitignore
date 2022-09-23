@@ -1,0 +1,7 @@
+.DS_Store
+artsy-scraper/node_modules
+artsy-scraper/src/.env
+artsy-scraper/Dockerfile
+artsy-scraper/README.md
+data-labeling/training-data/**/*.png
+data-labeling/dataset.json
