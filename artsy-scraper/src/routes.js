@@ -4,8 +4,8 @@ import 'dotenv/config';
 
 const remoteStore = await Actor.openKeyValueStore(
     process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, {
-        forceCloud: true
-    });
+    forceCloud: true
+});
 
 // https://stackoverflow.com/questions/31552125/defining-an-array-as-an-environment-variable-in-node-js
 const dataset0 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[0];
@@ -184,7 +184,9 @@ router.addHandler('HIDDENIMAGE', async ({
     log.debug(`Extracting data: ${request.url}`)
 
     let scrapedData;
-    const { copyData } = request.userData;
+    const {
+        copyData
+    } = request.userData;
     const imageRendered = await page.waitForSelector('#transitionFrom--ViewInRoom');
 
     if (imageRendered) {

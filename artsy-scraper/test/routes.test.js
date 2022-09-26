@@ -21,7 +21,6 @@ router.addDefaultHandler(async ({
 }) => {
     log.debug(`Handle gene categories`)
 
-    // Target links within the Styles and Movements classification.
     await page.waitForSelector('#jump--styles-and-movements a[href*="/gene/85-new-wave"] div');
 
     await enqueueLinks({
