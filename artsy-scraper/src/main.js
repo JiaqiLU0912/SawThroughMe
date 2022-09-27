@@ -12,7 +12,7 @@ log.debug('Setting up crawler.');
  * https://apify.github.io/apify-sdk-js/docs/guides/result-storage
  */
 const dataset1 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[1];
-const ErrorReport = await Actor.openDataset(dataset1, {
+const errorReport = await Actor.openDataset(dataset1, {
     forceCloud: true // Cloud storage will be used instead of the folder on the local disk.
 });
 
@@ -61,7 +61,7 @@ const crawler = new PuppeteerCrawler({
         log.error(`Request ${request.url} failed too many times.`);
 
         // https://crawlee.dev/api/puppeteer-crawler/class/PuppeteerCrawler
-        ErrorReport.pushData({ url: request.url, errors: request.errorMessages })
+        errorReport.pushData({ url: request.url, errors: request.errorMessages })
     },
 
     browserPoolOptions: {
