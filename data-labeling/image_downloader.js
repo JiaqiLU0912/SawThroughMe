@@ -53,9 +53,7 @@ export function downloadImg(url, dest) {
                 reject(new Error(`Request: ${url} timeout after ${timeout}ms`));
             })
             .on('error', (err) => { // https://stackoverflow.com/a/50821286/18513152
-                if (err.code === 'ECONNRESET') {
-                    return;
-                }
+                if (err.code === 'ECONNRESET') { return; }
             })
             .end(); // https://stackoverflow.com/questions/16995184/nodejs-what-does-socket-hang-up-actually-mean
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { mkdir } from 'node:fs/promises';
-import { downloadImg } from '../image_downloader.js' 
+import { downloadImg } from '../image_downloader.js'
 
 // https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope#:~:text=The%20__dirname%20or%20__,directory%20name%20of%20the%20path.
 const __filename = fileURLToPath(import.meta.url);
@@ -17,9 +17,7 @@ sequentialDownload();
 
 const createDirectory = async () => { // https://stackoverflow.com/a/51894627/18513152
     const genes = [];
-    for (const item of items) {
-        genes.push(item.gene);
-    }
+    for (const item of items) { genes.push(item.gene); }
 
     // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
     [...new Set(genes)].forEach(gene => {
@@ -48,7 +46,7 @@ const sequentialDownload = async () => {
         let url = record.imageUrl;
         let gene = record.gene;
 
-        // if (gene === '') {
+        // if (gene === '...') {
         const file = path.basename(url, '.jpg') + '.png';
         const destination = path.join(images, `${gene}`, file);
 

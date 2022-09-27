@@ -18,9 +18,7 @@
 
     const createDirectory = async () => { // https://stackoverflow.com/a/51894627/18513152
         const genes = [];
-        for (const item of items) {
-            genes.push(item.gene);
-        }
+        for (const item of items) { genes.push(item.gene); }
 
         // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
         categories = [...new Set(genes)];
@@ -59,7 +57,7 @@
     const parallelDownload = async () => {
         await Promise.all([createDirectory(), classifyData()]);
 
-        const urls = labeledData[''];
+        const urls = labeledData['...'];
 
         const results = await Promise.allSettled(urls.map((url) => {
             const file = path.basename(url, '.jpg') + '.png';

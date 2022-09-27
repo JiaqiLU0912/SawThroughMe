@@ -3,22 +3,15 @@ import { createPuppeteerRouter, log } from 'crawlee';
 import 'dotenv/config';
 
 const remoteStore = await Actor.openKeyValueStore(
-    process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, {
-    forceCloud: true
-});
+    process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, { forceCloud: true });
 
 // https://stackoverflow.com/questions/31552125/defining-an-array-as-an-environment-variable-in-node-js
 const dataset0 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[0];
-const remoteDataset = await Actor.openDataset(dataset0, {
-    forceCloud: true
-});
+const remoteDataset = await Actor.openDataset(dataset0, { forceCloud: true });
 
 export const router = createPuppeteerRouter();
 
-router.addDefaultHandler(async ({
-    page,
-    enqueueLinks
-}) => {
+router.addDefaultHandler(async ({ page, enqueueLinks }) => {
     log.debug(`Handling gene categories`)
 
     await page.waitForSelector('#jump--styles-and-movements a[href*="/gene/"] div');
@@ -29,18 +22,14 @@ router.addDefaultHandler(async ({
     });
 
     const genes = await page.$$eval('#jump--styles-and-movements a[href*="/gene/"] div', (element) => {
-        return element.map(characteristics => characteristics.textContent);
+        return element.map(styleOrMovement => styleOrMovement.textContent);
     });
 
-    await remoteStore.setValue('genes', genes);
+    await remoteStore.setValue('geneList', genes);
 });
 
 // Ensure all page links are enqueue, a safer and faster practice than finding the next link on each page.
-router.addHandler('CATEGORY', async ({
-    request,
-    page,
-    enqueueLinks
-}) => {
+router.addHandler('CATEGORY', async ({ request, page, enqueueLinks }) => {
     log.debug(`Enqueueing number-based pagination:`);
 
     // https://stackoverflow.com/questions/56043748/detecting-if-an-element-is-visible-on-the-page-with-javascript-or-puppeteer
@@ -48,13 +37,13 @@ router.addHandler('CATEGORY', async ({
 
     if (artworksAvailable) {
         const findPagination = await page.$('nav[aria-label="Pagination"]');
-        const multiplePages = findPagination;
+        const hasMultiplePages = findPagination;
 
-        if (multiplePages) {
+        if (hasMultiplePages) {
             // https://developers.apify.com/academy/puppeteer-playwright/common-use-cases/paginating-through-results#page-number-based-pagination
             await page.waitForSelector('nav[aria-label="Pagination"] div a[href*="gene"]');
             const pageLabel = await page.$$eval('nav[aria-label="Pagination"] div a[href*="gene"]', (element) => {
-                return element.map(labels => labels.textContent);
+                return element.map(label => label.textContent);
             });
 
             const lastPage = Number(pageLabel[pageLabel.length - 1]);
@@ -79,14 +68,7 @@ router.addHandler('CATEGORY', async ({
     };
 });
 
-router.addHandler('PERPAGE', async ({
-    request,
-    page,
-    proxyInfo,
-    session,
-    parseWithCheerio,
-    enqueueLinks
-}) => {
+router.addHandler('PERPAGE', async ({ request, page, proxyInfo, session, parseWithCheerio, enqueueLinks }) => {
     log.debug(`Extracting data: ${request.url}`)
     if (request.retryCount >= 1) log.debug(`Processing ${request.url} in ${request.retryCount + 1} times...`)
 
@@ -110,9 +92,7 @@ router.addHandler('PERPAGE', async ({
     await page.evaluate(async () => {
         // https://www.youtube.com/watch?v=AwyoVjVXnLk&list=PLRqwX-V7Uu6bKLPQvPRNNE65kBL62mVfx&index=2
         const delay = (msec) => {
-            return new Promise((resolve) => {
-                setTimeout(resolve, msec)
-            });
+            return new Promise(resolve => setTimeout(resolve, msec));
         };
 
         const gridItems = [...document.querySelectorAll('div[data-test="artworkGridItem"]')];
@@ -158,9 +138,7 @@ router.addHandler('PERPAGE', async ({
             await enqueueLinks({
                 urls: individualArtwork,
                 label: 'HIDDENIMAGE',
-                userData: {
-                    copyData
-                }
+                userData: { copyData }
             });
 
         } else {
@@ -176,17 +154,11 @@ router.addHandler('PERPAGE', async ({
     await remoteDataset.pushData(scrapedData);
 });
 
-router.addHandler('HIDDENIMAGE', async ({
-    request,
-    page,
-    parseWithCheerio
-}) => {
+router.addHandler('HIDDENIMAGE', async ({ request, page, parseWithCheerio }) => {
     log.debug(`Extracting data: ${request.url}`)
 
     let scrapedData;
-    const {
-        copyData
-    } = request.userData;
+    const { copyData } = request.userData;
     const imageRendered = await page.waitForSelector('#transitionFrom--ViewInRoom');
 
     if (imageRendered) {

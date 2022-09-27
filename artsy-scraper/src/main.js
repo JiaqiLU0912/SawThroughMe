@@ -40,9 +40,7 @@ const crawler = new PuppeteerCrawler({
      */
     useSessionPool: true,
     // Overrides default Session pool configuration.
-    sessionPoolOptions: {
-        maxPoolSize: 100
-    },
+    sessionPoolOptions: { maxPoolSize: 100 },
     persistCookiesPerSession: true,
 
     maxConcurrency: 50, // Be nice to the websites. Remove to unleash full power.
@@ -59,16 +57,11 @@ const crawler = new PuppeteerCrawler({
     requestHandler: router,
 
     // This function is called if the page processing failed more than maxRequestRetries+1 times.
-    failedRequestHandler({
-        request,
-    }) {
+    failedRequestHandler({ request }) {
         log.error(`Request ${request.url} failed too many times.`);
 
         // https://crawlee.dev/api/puppeteer-crawler/class/PuppeteerCrawler
-        ErrorReport.pushData({
-            url: request.url,
-            errors: request.errorMessages,
-        })
+        ErrorReport.pushData({ url: request.url, errors: request.errorMessages })
     },
 
     browserPoolOptions: {

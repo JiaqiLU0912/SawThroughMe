@@ -3,22 +3,15 @@ import { createPuppeteerRouter, puppeteerUtils, log } from 'crawlee';
 import 'dotenv/config';
 
 const remoteStore = await Actor.openKeyValueStore(
-    process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, {
-        forceCloud: true
-    });
+    process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, { forceCloud: true });
 
 // https://stackoverflow.com/questions/31552125/defining-an-array-as-an-environment-variable-in-node-js
 const dataset2 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[2];
-const remoteDataset = await Actor.openDataset(dataset2, {
-    forceCloud: true
-});
+const remoteDataset = await Actor.openDataset(dataset2, { forceCloud: true });
 
 export const router = createPuppeteerRouter();
 
-router.addDefaultHandler(async ({
-    page,
-    enqueueLinks
-}) => {
+router.addDefaultHandler(async ({ page, enqueueLinks }) => {
     log.debug(`Handle gene categories`)
 
     await page.waitForSelector('#jump--styles-and-movements a[href*="/gene/85-new-wave"] div');
@@ -29,29 +22,25 @@ router.addDefaultHandler(async ({
     });
 
     const genes = await page.$$eval('#jump--styles-and-movements a[href*="/gene/85-new-wave"] div', (element) => {
-        return element.map(characteristics => characteristics.textContent);
+        return element.map(styleOrMovements => styleOrMovements.textContent);
     });
 
-    await remoteStore.setValue('genes', genes);
+    await remoteStore.setValue('geneList', genes);
 });
 
 // Enqueue all page links first, a safer and faster practice than finding the next link on each page.
-router.addHandler('CATEGORY', async ({
-    request,
-    page,
-    enqueueLinks
-}) => {
+router.addHandler('CATEGORY', async ({ request, page, enqueueLinks }) => {
     log.debug(`Handle number-based pagination`);
 
     // https://stackoverflow.com/questions/56043748/detecting-if-an-element-is-visible-on-the-page-with-javascript-or-puppeteer
     const findPagination = await page.$('nav[aria-label="Pagination"]'); // Returns a promise or null.
-    const multiplePages = findPagination;
+    const hasMultiplePages = findPagination;
 
-    if (multiplePages) {
+    if (hasMultiplePages) {
         // https://developers.apify.com/academy/puppeteer-playwright/common-use-cases/paginating-through-results#page-number-based-pagination
         await page.waitForSelector('nav[aria-label="Pagination"] div a[href*="gene"]');
         const pageLabel = await page.$$eval('nav[aria-label="Pagination"] div a[href*="gene"]', (element) => {
-            return element.map(labels => labels.textContent);
+            return element.map(label => label.textContent);
         });
 
         const lastPage = Number(pageLabel[pageLabel.length - 1]);
@@ -75,13 +64,7 @@ router.addHandler('CATEGORY', async ({
     }
 });
 
-router.addHandler('PERPAGE', async ({
-    request,
-    page,
-    proxyInfo,
-    session,
-    parseWithCheerio
-}) => {
+router.addHandler('PERPAGE', async ({ request, page, proxyInfo, session, parseWithCheerio }) => {
     log.debug(`Extracting data: ${request.url}`);
     if (request.retryCount >= 1) log.debug(`Processing ${request.url} in ${request.retryCount + 1} times...`);
 
@@ -101,14 +84,10 @@ router.addHandler('PERPAGE', async ({
 
     // Scroll down the dynamtic page to load Lazy-loaded items. 
     // https://developers.apify.com/academy/web-scraping-for-beginners/crawling/dealing-with-dynamic-pages#scraping-dynamic-content
-    await puppeteerUtils.infiniteScroll(page, {
-        timeoutSecs: 5
-    });
+    await puppeteerUtils.infiniteScroll(page, { timeoutSecs: 5 });
 
     // Waiting logic: https://docs.apify.com/tutorials/scraping-dynamic-content#quick-summary
-    await page.waitForSelector('div > a > div > div > img', {
-        visible: true
-    });
+    await page.waitForSelector('div > a > div > div > img', { visible: true });
 
     const allArtworksLoaded = () => {
         const numberOfArtworks = page.$$('div > a > div > div > img').length;
