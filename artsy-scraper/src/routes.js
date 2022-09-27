@@ -6,8 +6,8 @@ const remoteStore = await Actor.openKeyValueStore(
     process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, { forceCloud: true });
 
 // https://stackoverflow.com/questions/31552125/defining-an-array-as-an-environment-variable-in-node-js
-const dataset0 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[0];
-const remoteDataset = await Actor.openDataset(dataset0, { forceCloud: true });
+const dataset = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[0];
+const remoteDataset = await Actor.openDataset(dataset, { forceCloud: true });
 
 export const router = createPuppeteerRouter();
 
