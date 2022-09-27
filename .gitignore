@@ -1,5 +1,6 @@
 .DS_Store
 artsy-scraper/node_modules
+artsy-scraper/src/storage
 artsy-scraper/src/.env
 artsy-scraper/Dockerfile
 artsy-scraper/README.md
