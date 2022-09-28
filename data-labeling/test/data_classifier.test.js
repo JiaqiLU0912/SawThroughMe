@@ -7,7 +7,7 @@ import { downloadImg } from '../image_downloader.js'
 // https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope#:~:text=The%20__dirname%20or%20__,directory%20name%20of%20the%20path.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const imageFolder = path.resolve(__dirname, 'images');
+const imageFolder = path.resolve(__dirname, 'training-data');
 
 const rawData = readFileSync('dataset.json');
 const data = JSON.parse(rawData);
