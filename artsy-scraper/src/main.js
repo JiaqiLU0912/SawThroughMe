@@ -11,8 +11,8 @@ log.debug('Setting up crawler.');
  * https://crawlee.dev/docs/guides/apify-platform
  * https://apify.github.io/apify-sdk-js/docs/guides/result-storage
  */
-const dataset1 = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[1];
-const errorReport = await Actor.openDataset(dataset1, {
+const tempDataset = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[1];
+const errorReport = await Actor.openDataset(tempDataset, {
     forceCloud: true // Cloud storage will be used instead of the folder on the local disk.
 });
 
