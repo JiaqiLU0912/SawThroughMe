@@ -57,9 +57,9 @@ const classifyData = async () => {
 const parallelDownload = async () => {
     await Promise.all([createDirectory(), classifyData()]);
 
-    const imgsPerCategory = labeledData['...'];
+    const imagesPerCategory = labeledData['...'];
 
-    const results = await Promise.allSettled(imgsPerCategory.map((url) => {
+    const results = await Promise.allSettled(imagesPerCategory.map((url) => {
         const file = path.basename(url, '.jpg') + '.png';
         const destination = path.join(imageFolder, '...', file);
         return downloadImg(url, destination);
