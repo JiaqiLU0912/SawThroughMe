@@ -7,7 +7,7 @@ import { downloadImg } from '../image_downloader.js'
 // https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope#:~:text=The%20__dirname%20or%20__,directory%20name%20of%20the%20path.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const images = path.resolve(__dirname, 'images');
+const imageFolder = path.resolve(__dirname, 'images');
 
 const rawData = readFileSync('dataset.json');
 const data = JSON.parse(rawData);
@@ -22,7 +22,7 @@ const createDirectory = async () => { // https://stackoverflow.com/a/51894627/18
     // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
     [...new Set(genes)].forEach(gene => {
         try {
-            const parentPath = path.resolve(images, `${gene}`);
+            const parentPath = path.resolve(imageFolder, `${gene}`);
             mkdir(parentPath);
         } catch (err) {
             console.error(err.message);
@@ -48,7 +48,7 @@ const sequentialDownload = async () => {
 
         // if (gene === '...') {
         const file = path.basename(url, '.jpg') + '.png';
-        const destination = path.join(images, `${gene}`, file);
+        const destination = path.join(imageFolder, `${gene}`, file);
 
         try {
             await downloadImg(url, destination);
