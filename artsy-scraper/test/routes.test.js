@@ -2,8 +2,7 @@ import { Actor } from 'apify';
 import { createPuppeteerRouter, puppeteerUtils, log } from 'crawlee';
 import 'dotenv/config';
 
-const remoteStore = await Actor.openKeyValueStore(
-    process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, { forceCloud: true });
+const remoteStore = await Actor.openKeyValueStore(process.env.CRAWLEE_DEFAULT_KEY_VALUE_STORE_ID, { forceCloud: true });
 
 // https://stackoverflow.com/questions/31552125/defining-an-array-as-an-environment-variable-in-node-js
 const dataset = process.env.CRAWLEE_DEFAULT_DATASET_ID.split(' ')[0];
